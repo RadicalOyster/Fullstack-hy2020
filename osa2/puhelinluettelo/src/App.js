@@ -16,7 +16,7 @@ const App = () => {
     setMessage(null)
   }, [])
 
-  console.log('render', persons.length, 'notes')
+  console.log('render', persons.length, 'persons')
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -44,17 +44,19 @@ const App = () => {
             personsService
               .getAll()
               .then(response => {
-                setPersons(response.data)
+                console.log(response.data)
+                persons.concat(response.data)
               })
-
+              setMessage({ content: "Updated " + newName + "'s phone number" })
+              setTimeout(() => {
+                setMessage(null)
+              }, 5000)
           })
+
       }
-      setMessage({content: "Updated " + newName + "'s phone number"})
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
       return
     }
+
     const personObject = {
       name: newName,
       number: newNumber
@@ -63,13 +65,25 @@ const App = () => {
     personsService
       .create(personObject)
       .then(response => {
-        setPersons(persons.concat(response.data))
+        console.log(response.data.name, response.data.number, response.data.id)
+        const newPerson = { name: response.data.name, number: response.data.number, id: response.data.id }
+        setPersons(persons.concat(newPerson))
+        console.log(persons)
       })
-    setMessage({content: "Added " + newName + " to the phonebook"})
+      .catch(error => {
+        console.log(error.response.data)
+        setMessage({content: error.response.data})
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+        return
+      })
+
+
+    setMessage({ content: "Added " + newName + " to the phonebook" })
     setTimeout(() => {
       setMessage(null)
     }, 5000)
-    console.log(persons)
   }
 
   const removePerson = (personToRemove) => {
@@ -77,10 +91,11 @@ const App = () => {
       personsService
         .deletePerson(personToRemove)
         .then(response => {
+          console.log("HEYHEY")
           setPersons(persons.filter(person => person.id !== personToRemove.id))
         })
     }
-    setMessage({content: "Removed " + personToRemove.name + " from the phonebook"})
+    setMessage({ content: "Removed " + personToRemove.name + " from the phonebook" })
     setTimeout(() => {
       setMessage(null)
     }, 5000)
@@ -104,7 +119,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification/>
+      <Notification />
       <FilterField
         filter={filter}
         handleFilterChange={handleFilterChange} />
