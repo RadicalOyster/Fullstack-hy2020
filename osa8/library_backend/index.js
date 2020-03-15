@@ -11,7 +11,7 @@ const JWT_SECRET = 'TOTALLY SECRET KEY'
 
 mongoose.set('useFindAndModify', false)
 
-const MONGODB_URI = 'mongodb+srv://tester:salasana@cluster0-fpjmq.mongodb.net/test?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://tester:<PASSWORD GOES HERE>@cluster0-fpjmq.mongodb.net/test?retryWrites=true&w=majority'
 
 console.log('connecting to', MONGODB_URI)
 
